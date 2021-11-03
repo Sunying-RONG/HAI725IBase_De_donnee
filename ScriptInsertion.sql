@@ -75,7 +75,23 @@ COMMIT;
 -- ORDER BY comm DESC;
 
 -- retourner les departements qui ont plus de 5 employées
-SELECT D.n_dept, D.nom, count(E.num)
-FROM DEPT D, EMP E
-WHERE D.n_dept = E.n_dept
-GROUP BY D.n_dept, D.nom having count(E.num) > 5;
+-- SELECT D.n_dept, D.nom, count(E.num)
+-- FROM DEPT D, EMP E
+-- WHERE D.n_dept = E.n_dept
+-- GROUP BY D.n_dept, D.nom HAVING count(E.num) > 5;
+
+-- retourner les departements qui ont les plus nombreux d'employées
+-- SELECT n_dept, count(num)
+-- FROM EMP
+-- GROUP BY n_dept HAVING count(num)=
+-- (SELECT max(count(num)) FROM EMP GROUP BY n_dept);
+
+-- test EXISTS
+-- SELECT num 
+-- FROM EMP E
+-- WHERE EXISTS (SELECT * FROM DEPT D WHERE E.num = D.n_dept);
+
+-- test ORDER BY
+-- SELECT *
+-- FROM EMP
+-- ORDER BY n_dept, num;
