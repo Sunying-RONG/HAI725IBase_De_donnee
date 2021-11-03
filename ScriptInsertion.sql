@@ -39,7 +39,7 @@ INSERT INTO EMP VALUES
 INSERT INTO EMP VALUES
         ('ADIBA',25067,'ingenieur',24533,'05-OCT-97',3000,NULL,10);
 INSERT INTO EMP VALUES
-        ('CODD',24533,'directeur',25717,'12-SEP-75',5500,NULL,100);
+        ('CODD',24533,'directeur',25717,'12-SEP-75',5500,NULL,10);
 INSERT INTO EMP VALUES
         ('LAMERE',27047,'directeur',25717,'07-SEP-99',4500,NULL,20);
 INSERT INTO EMP VALUES
@@ -70,6 +70,12 @@ COMMIT;
 -- WHERE salaire <= 2000;
 
 -- 3. Donner la liste des employés ayant une commission, classée par commission décroissante,
-SELECT nom FROM EMP
-WHERE comm IS NOT NULL
-ORDER BY comm DESC;
+-- SELECT nom FROM EMP
+-- WHERE comm IS NOT NULL
+-- ORDER BY comm DESC;
+
+-- retourner les departements qui ont plus de 5 employées
+SELECT D.n_dept, D.nom, count(E.num)
+FROM DEPT D, EMP E
+WHERE D.n_dept = E.n_dept
+GROUP BY D.n_dept, D.nom having count(E.num) > 5;
