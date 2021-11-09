@@ -59,6 +59,7 @@ INSERT INTO DEPT VALUES
 
 COMMIT;
 
+-- SET WRAP OFF;
 -- desc EMP
 -- SELECT * FROM EMP;
 
@@ -131,12 +132,16 @@ COMMIT;
 -- 7. Quels sont les employés ayant la même fonction que ”CODD” ?
 -- projection, selection imbrique
 -- SELECT nom FROM EMP WHERE fonction = (SELECT fonction FROM EMP WHERE nom = 'CODD');
+-- select e.nom, e.fonction from Emp e, Emp codd where e.fonction = codd.fonction and codd.nom = 'CODD' add e.nom <> 'CODD';
+-- select nom, fonction from Emp where nom <> 'CODD' and fonction in (select fonction...)
+-- select nom, fonction from Emp e where nom <> 'CODD' and exists (select *from Emp c where nom = 'CODD' and e.fonction = c.fonction);
 
 
 -- 8. Quels sont les employés gagnant plus que tous les employés du département 30 ?
 -- projection, selection imbrique, max()
 
 -- SELECT nom FROM EMP WHERE salaire > (SELECT max(salaire) FROM EMP WHERE n_dept = 30);
+-- ALL() for general use, max() only for oracle
 
 
 -- 9. Quels sont les employés ne travaillant pas dans le même département que leur supérieur hiérarchique ?
@@ -197,20 +202,58 @@ COMMIT;
 
 -- 15. Donner les départements possédant des employés exerçant l’ensemble des fonctions référencées au sein de la société.
 -- division, par deux difference
-CREATE OR REPLACE VIEW NonToutFonc AS
-SELECT DISTINCT e1.n_dept, e2.fonction 
-FROM EMP e1, EMP e2
-MINUS 
-SELECT DISTINCT n_dept, fonction
-FROM EMP;
+-- CREATE OR REPLACE VIEW NonToutFonc AS
+-- SELECT DISTINCT e1.n_dept, e2.fonction 
+-- FROM EMP e1, EMP e2
+-- MINUS 
+-- SELECT DISTINCT n_dept, fonction
+-- FROM EMP;
 
-SELECT DISTINCT n_dept
-FROM EMP 
-MINUS 
-SELECT n_dept
-FROM NonToutFonc;
+-- SELECT DISTINCT n_dept
+-- FROM EMP 
+-- MINUS 
+-- SELECT n_dept
+-- FROM NonToutFonc;
 
 -- CHECK
-SELECT n_dept, fonction
-FROM EMP 
-ORDER BY n_dept;
+-- SELECT n_dept, fonction
+-- FROM EMP 
+-- ORDER BY n_dept;
+
+-- TP2
+-- 2.1 definition des contraintes
+ALTER TABLE DEPT ADD CONSTRAINT dept_pk PRIMARY KEY(n_dept);
+
+ALTER TABLE EMP ADD CONSTRAINT emp_pk PRIMARY KEY(num);
+
+-- find doublon
+-- SELECT COUNT(*) AS doublon, nom 
+-- FROM EMP 
+-- GROUP BY nom
+-- HAVING COUNT(*) > 1;
+
+-- SELECT nom, num 
+-- FROM EMP 
+-- WHERE nom = 'MARTIN';
+--change doublon
+UPDATE EMP SET nom = 'MARTIN2' 
+WHERE num = 17147;
+
+ALTER TABLE EMP ADD CONSTRAINT nom_u UNIQUE(nom);
+
+ALTER TABLE EMP ADD CONSTRAINT responsable FOREIGN KEY(n_sup) REFERENCES EMP(num); 
+
+ALTER TABLE EMP ADD CONSTRAINT dept FOREIGN KEY(n_dept) REFERENCES DEPT(n_dept) ON DELETE CASCADE;
+
+-- SELECT * FROM EMP 
+-- WHERE (comm IS NOT NULL AND fonction <> 'commercial') 
+-- OR (comm is NULL AND fonction = 'commercial');
+
+ALTER TABLE EMP ADD CONSTRAINT commission 
+CHECK((comm IS NOT NULL AND fonction = 'commercial') OR 
+(comm IS NULL AND fonction <> 'commercial'));
+
+-- SELECT * FROM user_constraints;
+-- select constraint_name, constraint_type, table_name from user_constraints;
+-- col constraint_name for a20
+-- alphanumeric
