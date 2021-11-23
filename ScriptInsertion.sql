@@ -245,15 +245,66 @@ ALTER TABLE EMP ADD CONSTRAINT responsable FOREIGN KEY(n_sup) REFERENCES EMP(num
 
 ALTER TABLE EMP ADD CONSTRAINT dept FOREIGN KEY(n_dept) REFERENCES DEPT(n_dept) ON DELETE CASCADE;
 
--- SELECT * FROM EMP 
--- WHERE (comm IS NOT NULL AND fonction <> 'commercial') 
--- OR (comm is NULL AND fonction = 'commercial');
+SELECT * FROM EMP 
+WHERE (comm IS NOT NULL AND fonction <> 'commercial') 
+OR (comm is NULL AND fonction = 'commercial');
 
 ALTER TABLE EMP ADD CONSTRAINT commission 
 CHECK((comm IS NOT NULL AND fonction = 'commercial') OR 
 (comm IS NULL AND fonction <> 'commercial'));
 
 -- SELECT * FROM user_constraints;
--- select constraint_name, constraint_type, table_name from user_constraints;
--- col constraint_name for a20
--- alphanumeric
+-- Note: set size col constraint_name for a20  alphanumeric
+-- Note : 'C' (Check Constraint), 'P' (Primary Key), 'R' (Referential/Foreign Key), 'U' (Unique), 'V' (with check option on a view), 'O' (with read only on a view).
+col constraint_name for a20
+col constraint_type for a20
+col table_name for a20
+select constraint_name, constraint_type, status, table_name from user_constraints
+WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
+
+-- SELECT DISTINCT fonction from EMP;
+-- ALTER TABLE EMP ADD CONSTRAINT domain_fonction CHECK(fonction in 
+--         ('directeur', 'administratif', 'commercial', 'ingenieur', 'president'));
+-- Note : ADD / DROP / DISABLE / ENABLE
+-- Note :CHECK / PRIMARY KEY / FOREIGN KEY / UNIQUE / NOT NULL
+
+ALTER TABLE EMP DISABLE CONSTRAINT commission;
+-- test transgression commission
+INSERT INTO EMP VALUES('BARA2',94831,'administratif', 16712,'10-SEP-08',1500,100,30);
+
+-- ALTER TABLE EMP ENABLE CONSTRAINT commission;
+DROP TABLE REJETS;
+CREATE TABLE REJETS (
+        ROW_ID ROWID,
+        OWNER varchar2(30),
+        TABLE_NAME varchar2(30),
+        CONSTRAINT varchar2(30)
+);
+ALTER TABLE EMP ENABLE CONSTRAINT commission EXCEPTIONS INTO REJETS;
+
+col ROW_ID for a20
+col OWNER for a15
+col TABLE_NAME for a15
+col CONSTRAINT for a15
+SELECT * FROM REJETS;
+
+SELECT constraint_name, constraint_type, status, table_name FROM user_constraints
+WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
+
+DELETE FROM EMP WHERE num = 94831;
+ALTER TABLE EMP ENABLE CONSTRAINT commission EXCEPTIONS INTO REJETS;
+SELECT constraint_name, constraint_type, status, table_name FROM user_constraints
+WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
+
+-- 2.4
+col constraint_name for a20
+col constraint_type for a15
+col table_name for a15
+SELECT constraint_name, constraint_type, status, validated, table_name FROM user_constraints
+WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
+
+col constraint_name for a20
+col column_name for a15
+col table_name for a15
+SELECT constraint_name, column_name, table_name FROM user_cons_columns
+WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
