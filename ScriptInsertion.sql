@@ -308,3 +308,33 @@ col column_name for a15
 col table_name for a15
 SELECT constraint_name, column_name, table_name FROM user_cons_columns
 WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
+
+-- Note: method 1 num_rows is not accurate 
+col table_name for a15
+col num_rows for a15
+SELECT table_name, num_rows FROM user_tables;
+-- Note: method 2 
+select table_name,
+      to_number(
+        extractvalue(
+          xmltype(
+   dbms_xmlgen.getxml('select count(*) c from '||table_name))
+          ,'/ROWSET/ROW/C')) count
+from user_tables;
+
+--??? Donner le nom des tables auquelles vous avez accès, ainsi que le nom de leurs propriétaires (vue all tables)
+-- SELECT table_name FROM all_tables;
+
+-- Donner le nom de toutes les tables (et de leurs propriétaires) de l’ensemble des schémas utilisateurs de la base de données master (vue dba tables)
+-- SELECT table_name, owner FROM dba_tables;
+ALTER TABLE EMP DROP CONSTRAINT nom_u;
+ALTER TABLE EMP DROP CONSTRAINT commission;
+ALTER TABLE EMP DROP CONSTRAINT dept;
+ALTER TABLE EMP DROP CONSTRAINT responsable;
+ALTER TABLE EMP DROP CONSTRAINT emp_pk;
+
+col constraint_name for a20
+col constraint_type for a20
+col table_name for a20
+select constraint_name, constraint_type, status, table_name from user_constraints
+WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
