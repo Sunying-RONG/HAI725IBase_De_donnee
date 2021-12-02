@@ -221,7 +221,7 @@ COMMIT;
 -- ORDER BY n_dept;
 
 -- TP2
--- 2.1 definition des contraintes
+-- 2.1 definition des constraintes
 ALTER TABLE DEPT ADD CONSTRAINT dept_pk PRIMARY KEY(n_dept);
 
 ALTER TABLE EMP ADD CONSTRAINT emp_pk PRIMARY KEY(num);
@@ -311,7 +311,7 @@ WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
 
 -- Note: method 1 num_rows is not accurate 
 col table_name for a15
-col num_rows for a15
+col num_rows for 9999
 SELECT table_name, num_rows FROM user_tables;
 -- Note: method 2 
 select table_name,
@@ -327,14 +327,49 @@ from user_tables;
 
 -- Donner le nom de toutes les tables (et de leurs propriétaires) de l’ensemble des schémas utilisateurs de la base de données master (vue dba tables)
 -- SELECT table_name, owner FROM dba_tables;
-ALTER TABLE EMP DROP CONSTRAINT nom_u;
-ALTER TABLE EMP DROP CONSTRAINT commission;
-ALTER TABLE EMP DROP CONSTRAINT dept;
-ALTER TABLE EMP DROP CONSTRAINT responsable;
-ALTER TABLE EMP DROP CONSTRAINT emp_pk;
+-- ALTER TABLE EMP DROP CONSTRAINT nom_u;
+-- ALTER TABLE EMP DROP CONSTRAINT commission;
+-- ALTER TABLE EMP DROP CONSTRAINT dept;
+-- ALTER TABLE EMP DROP CONSTRAINT responsable;
+-- ALTER TABLE EMP DROP CONSTRAINT emp_pk;
 
 col constraint_name for a20
 col constraint_type for a20
 col table_name for a20
 select constraint_name, constraint_type, status, table_name from user_constraints
 WHERE table_name = 'DEPT' OR table_name = 'EMP' ORDER BY table_name;
+
+-- TP3
+desc user_tables;
+col num_rows for 9999
+select table_name, num_rows from user_tables;
+analyze table EMP compute statistics;
+analyze table DEPT compute statistics;
+analyze table REJETS compute statistics;
+select table_name, num_rows from user_tables;
+
+desc user_tab_columns;
+col data_type for a20
+select table_name, column_name, data_type from user_tab_columns
+where table_name = 'EMP';
+
+select count(*) from user_tab_columns
+where table_name = 'EMP';
+
+select table_name, count(*) as nbColonne
+from user_tab_columns GROUP BY table_name;
+
+-- select * from user_catalog; -- schéma que l'on a droit sauf méta schéma
+-- select * from all_catalog; -- tout les objet accessible par utilisateur
+-- purge recyclebin; -- remove objets temporaires
+set linesize 110
+set pagesize 100
+column constraint_name format a20
+
+desc user_constraints;
+select constraint_name, constraint_type, status, table_name from user_constraints;
+
+column comments format a20
+select * from dictionary;
+desc user_cons_columns;
+

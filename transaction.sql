@@ -1,0 +1,27 @@
+ALTER SESSION SET NLS_LANGUAGE = AMERICAN;
+ALTER SESSION SET NLS_TERRITORY = AMERICA;
+-- lola
+-- GRANT SELECT, UPDATE, DELETE ON EMP TO E20210011437;
+
+-- SUNYING
+-- select * from E20210011936.EMP;
+set linesize 110
+set pagesize 100
+
+select * from E20210011936.EMP;
+
+-- INSERT INTO E20210011936.EMP VALUES
+--         ('SYTEST',99999,'directeur',NULL,'23-MAY-90',20000,NULL,30); 
+-- INSERT INTO E20210011936.EMP VALUES
+--         ('SYTEST2',99998,'directeur',NULL,'23-MAY-90',20000,NULL,30); 
+-- commit;
+-- UPDATE E20210011936.EMP SET NOM = 'BARASYTEST'
+-- WHERE NUM = 24831;
+
+UPDATE E20210011936.EMP SET salaire = 88888
+WHERE fonction = 'directeur';
+-- commit;
+
+select * from E20210011936.EMP;
+
+select count(*) from v$session where username='E20210011437';
